@@ -1,0 +1,61 @@
+﻿:root {
+  color-scheme: light;
+  --bg: #0b1220;
+  --panel: #121a2c;
+  --panel-soft: #1a2338;
+  --text: #e6edf7;
+  --muted: #99a8c5;
+  --accent: #4ade80;
+  --danger: #fb7185;
+  --warning: #fbbf24;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top, #1b2540 0%, var(--bg) 55%);
+  color: var(--text);
+}
+
+main {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.card {
+  background: linear-gradient(145deg, var(--panel), var(--panel-soft));
+  border: 1px solid #27314a;
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.badge.low { background: #1e3a8a33; color: #93c5fd; }
+.badge.medium { background: #92400e33; color: #fcd34d; }
+.badge.high { background: #7f1d1d33; color: #fca5a5; }
+.badge.critical { background: #88133755; color: #fda4af; }
