@@ -1,4 +1,4 @@
-from typing import Dict, List
+﻿from typing import Dict, List
 
 import feedparser
 
@@ -13,7 +13,8 @@ class CollectorAgent:
             parsed = feedparser.parse(feed_url)
             source = parsed.feed.get("title", feed_url)
 
-            for entry in parsed.entries[:limit]:
+            # Fetch exactly one record per feed.
+            for entry in parsed.entries[:1]:
                 title = entry.get("title", "")
                 summary = entry.get("summary", "")
                 text = f"{title} {summary}".strip()

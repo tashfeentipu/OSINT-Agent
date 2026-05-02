@@ -1,10 +1,8 @@
 ﻿"use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { ThreatDashboardData, ThreatViewModel } from "@/lib/transform";
-
-type TabName = "Overview" | "Details" | "Sources";
 
 type Props = {
   data: ThreatDashboardData;
@@ -15,13 +13,14 @@ function copyText(value: string): void {
 }
 
 function Card({ item, index }: { item: ThreatViewModel; index: number }) {
+  const severityClass = item.riskLevel.toLowerCase();
   const [open, setOpen] = useState(false);
 
   return (
-    <article className="card reveal" style={{ animationDelay: `${index * 90}ms` }}>
+    <article className="card glassCard reveal" style={{ animationDelay: `${index * 90}ms` }}>
       <div className="row">
-        <h3 className="title">{item.source}</h3>
-        <span className={`badge ${item.riskLevel.toLowerCase()}`}>{item.riskLevel}</span>
+        <h3>{item.source}</h3>
+        <span className={`badge ${severityClass}`}>{item.riskLevel}</span>
       </div>
 
       <p className="summary">{item.summary}</p>
@@ -45,33 +44,34 @@ function Card({ item, index }: { item: ThreatViewModel; index: number }) {
         </div>
       </div>
 
-      <div className="actions">
-        <button onClick={() => copyText(item.summary)} className="btnSecondary" type="button">Copy Summary</button>
-        <button onClick={() => copyText(item.action)} className="btnSecondary" type="button">Copy Action</button>
-        <button onClick={() => setOpen((prev) => !prev)} className="btnGhost" type="button">
+      <div className={open ? "deepDive open" : "deepDive"}>
+        <button
+          className="deepDiveToggle"
+          type="button"
+          onClick={() => setOpen((prev) => !prev)}
+          aria-expanded={open}
+        >
           {open ? "Hide Deep Dive" : "Show Deep Dive"}
         </button>
-      </div>
-
-      {open ? (
-        <div className="deepDive">
+        <div className="deepDiveContent">
           <p>{item.deepDive}</p>
           <p className="meta">Transparency: {item.transparencyNote}</p>
           <p className="meta">Recommended Action: {item.action}</p>
         </div>
-      ) : null}
+      </div>
+
+      <div className="actions">
+        <button onClick={() => copyText(item.summary)} className="btnSecondary" type="button">Copy Summary</button>
+        <button onClick={() => copyText(item.action)} className="btnSecondary" type="button">Copy Action</button>
+      </div>
     </article>
   );
 }
 
 export default function ThreatDashboard({ data }: Props) {
-  const [tab, setTab] = useState<TabName>("Overview");
-
-  const sources = useMemo(() => Array.from(new Set(data.items.map((item) => item.source))), [data.items]);
-
   return (
     <>
-      <section className="card hero reveal">
+      <section className="card hero glassCard reveal">
         <h1>AI Threat Intelligence</h1>
         <p className="lead">{data.headerSummary}</p>
         <p className="meta">Generated: {new Date(data.generatedAt).toLocaleString()} | Total: {data.totalItems}</p>
@@ -81,48 +81,29 @@ export default function ThreatDashboard({ data }: Props) {
         </div>
       </section>
 
-      <section className="tabs reveal">
-        {(["Overview", "Details", "Sources"] as TabName[]).map((tabName) => (
-          <button
-            key={tabName}
-            type="button"
-            className={tabName === tab ? "tab active" : "tab"}
-            onClick={() => setTab(tabName)}
-          >
-            {tabName}
-          </button>
+      <section className="card glassCard reveal">
+        <h2>Key Insights</h2>
+        <ul className="insightCards">
+          {data.keyInsights.map((insight) => (
+            <li key={insight}>{insight}</li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="grid">
+        {data.items.map((item, index) => (
+          <Card key={`${item.source}-${index}`} item={item} index={index} />
         ))}
       </section>
 
-      {tab === "Overview" ? (
-        <section className="card reveal">
-          <h2>Key Insights</h2>
-          <ul className="insights">
-            {data.keyInsights.map((insight) => (
-              <li key={insight}>{insight}</li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
-
-      {tab === "Details" ? (
-        <section className="grid">
-          {data.items.map((item, index) => (
-            <Card key={`${item.source}-${index}`} item={item} index={index} />
+      <section className="card glassCard reveal">
+        <h2>Sources</h2>
+        <ul className="insights">
+          {Array.from(new Set(data.items.map((item) => item.source))).map((source) => (
+            <li key={source}>{source}</li>
           ))}
-        </section>
-      ) : null}
-
-      {tab === "Sources" ? (
-        <section className="card reveal">
-          <h2>Sources</h2>
-          <ul className="insights">
-            {sources.map((source) => (
-              <li key={source}>{source}</li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
+        </ul>
+      </section>
     </>
   );
 }
