@@ -38,6 +38,20 @@ The system follows a modular, agent-based design:
 - **Orchestrator**
   - Coordinates agent interactions and manages data flow across the pipeline
 
+### Agent Flow Diagram
+
+```mermaid
+flowchart TD
+    A[RSS/OSINT Sources] --> B[Collector Agent]
+    B --> C[Ethical AI Layer<br/>Redaction + Transparency Note]
+    C --> D[Analyzer Agent<br/>Threat Type + Entities + Indicators]
+    D --> E[Risk Agent<br/>Rule-based Scoring]
+    E --> F[Reporter Agent<br/>Summary + Recommended Action]
+    F --> G[Orchestrator]
+    G --> H[FastAPI /threats]
+    H --> I[Next.js Dashboard]
+```
+
 ---
 
 ## ⚙️ Tech Stack
