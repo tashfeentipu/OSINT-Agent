@@ -1,23 +1,14 @@
-﻿import ThreatCard from "@/components/ThreatCard";
+﻿import ThreatDashboard from "@/components/ThreatDashboard";
 import { fetchThreats } from "@/lib/api";
+import { transformThreatResponse } from "@/lib/transform";
 
 export default async function HomePage() {
-  const data = await fetchThreats();
+  const response = await fetchThreats();
+  const dashboardData = transformThreatResponse(response);
 
   return (
     <main>
-      <section className="card" style={{ marginBottom: "1rem" }}>
-        <h1 style={{ marginTop: 0 }}>AI Threat Intelligence</h1>
-        <p className="meta">
-          Generated: {new Date(data.generated_at).toLocaleString()} | Total Threats: {data.total_items}
-        </p>
-      </section>
-
-      <section className="grid">
-        {data.results.map((threat, index) => (
-          <ThreatCard key={`${threat.source}-${index}`} threat={threat} />
-        ))}
-      </section>
+      <ThreatDashboard data={dashboardData} />
     </main>
   );
 }
