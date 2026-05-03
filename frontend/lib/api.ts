@@ -33,3 +33,7 @@ export async function fetchThreats(): Promise<ThreatResponse> {
   }
   return res.json();
 }
+
+export function getThreatStreamUrl(limit = 12): string {
+  return `${API_BASE}/threats/stream?limit=${limit}`;
+}

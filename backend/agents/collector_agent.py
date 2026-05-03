@@ -1,4 +1,5 @@
-﻿from typing import Dict, List
+import random
+from typing import Dict, List
 
 import feedparser
 
@@ -12,18 +13,22 @@ class CollectorAgent:
         for feed_url in feeds:
             parsed = feedparser.parse(feed_url)
             source = parsed.feed.get("title", feed_url)
+            entries = parsed.entries or []
 
-            # Fetch exactly one record per feed.
-            for entry in parsed.entries[:1]:
-                title = entry.get("title", "")
-                summary = entry.get("summary", "")
-                text = f"{title} {summary}".strip()
+            if not entries:
+                continue
 
-                items.append(
-                    {
-                        "source": source,
-                        "text": text,
-                    }
-                )
+            # Fetch one random record per feed so repeated requests do not always analyze entry 0.
+            entry = random.choice(entries)
+            title = entry.get("title", "")
+            summary = entry.get("summary", "")
+            text = f"{title} {summary}".strip()
+
+            items.append(
+                {
+                    "source": source,
+                    "text": text,
+                }
+            )
 
         return items[:limit]
