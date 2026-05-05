@@ -1,12 +1,13 @@
-﻿from typing import Any, Dict
+from typing import Any, Dict
 
 
 class RiskAgent:
-    """Simple rule-based risk scoring from analysis output."""
+    """Rule-based risk scoring from analysis output."""
 
     def assess(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
         threat_type = str(analysis.get("threat_type", "unknown")).lower()
         indicators = analysis.get("risk_indicators", [])
+        analysis_confidence = float(analysis.get("confidence_score", 0.0))
 
         score = 0
         score += len(indicators) * 2
@@ -25,7 +26,8 @@ class RiskAgent:
         else:
             level = "Low"
 
-        confidence = min(0.5 + (score * 0.04), 0.98)
+        # Include upstream analysis confidence so risk confidence reflects signal quality.
+        confidence = min(0.3 + (score * 0.03) + (analysis_confidence * 0.4), 0.98)
         return {
             "risk_level": level,
             "confidence_score": round(confidence, 2),
