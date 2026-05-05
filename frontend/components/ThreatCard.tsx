@@ -1,8 +1,12 @@
-﻿import { ThreatItem } from "@/lib/api";
+import { ThreatItem } from "@/lib/api";
 
 type Props = {
   threat: ThreatItem;
 };
+
+function toPercent(value: number): string {
+  return `${Math.round(value * 100)}%`;
+}
 
 export default function ThreatCard({ threat }: Props) {
   const severityClass = threat.risk.risk_level.toLowerCase();
@@ -15,8 +19,8 @@ export default function ThreatCard({ threat }: Props) {
       </div>
       <p>{threat.report.summary}</p>
       <p className="meta">Threat Type: {threat.analysis.threat_type}</p>
-      <p className="meta">Risk Confidence: {threat.risk.confidence_score.toFixed(2)}</p>
-      <p className="meta">Analysis Confidence: {threat.analysis.confidence_score.toFixed(2)}</p>
+      <p className="meta">Risk Confidence: {toPercent(threat.risk.confidence_score)}</p>
+      <p className="meta">Analysis Confidence: {toPercent(threat.analysis.confidence_score)}</p>
       <p className="meta">Recommended Action: {threat.report.recommended_action}</p>
     </article>
   );

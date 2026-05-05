@@ -1,4 +1,4 @@
-﻿import { ThreatItem, ThreatResponse } from "@/lib/api";
+import { ThreatItem, ThreatResponse } from "@/lib/api";
 
 export type ThreatViewModel = {
   source: string;
@@ -22,13 +22,17 @@ export type ThreatDashboardData = {
   items: ThreatViewModel[];
 };
 
+function toPercent(value: number): string {
+  return `${Math.round(value * 100)}%`;
+}
+
 function toInsightItems(item: ThreatItem): string[] {
   const indicators = item.analysis.risk_indicators.slice(0, 3);
   const entities = item.analysis.entities.slice(0, 2);
 
   const insights: string[] = [];
   insights.push(`Type: ${item.analysis.threat_type}`);
-  insights.push(`Risk: ${item.risk.risk_level} (${item.risk.confidence_score.toFixed(2)})`);
+  insights.push(`Risk: ${item.risk.risk_level} (${toPercent(item.risk.confidence_score)})`);
 
   if (indicators.length > 0) {
     insights.push(`Indicators: ${indicators.join(", ")}`);
@@ -66,7 +70,7 @@ export function transformThreatResponse(data: ThreatResponse): ThreatDashboardDa
 
   const keyInsights: string[] = [
     `Most frequent threat category: ${items[0]?.threatType ?? "unknown"}`,
-    `Average risk confidence: ${(items.reduce((sum, item) => sum + item.confidenceScore, 0) / Math.max(items.length, 1)).toFixed(2)}`,
+    `Average risk confidence: ${toPercent(items.reduce((sum, item) => sum + item.confidenceScore, 0) / Math.max(items.length, 1))}`,
     `Sanitization enabled for sensitive fields before analysis.`,
   ];
 

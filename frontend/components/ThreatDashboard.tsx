@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 
@@ -10,6 +10,10 @@ type Props = {
 
 function copyText(value: string): void {
   void navigator.clipboard.writeText(value);
+}
+
+function toPercent(value: number): string {
+  return `${Math.round(value * 100)}%`;
 }
 
 function Card({ item, index }: { item: ThreatViewModel; index: number }) {
@@ -38,8 +42,8 @@ function Card({ item, index }: { item: ThreatViewModel; index: number }) {
         <h4>Structured Data</h4>
         <div className="dataGrid">
           <div className="dataCell"><strong>Threat Type</strong><span>{item.threatType}</span></div>
-          <div className="dataCell"><strong>Risk Confidence</strong><span>{item.confidenceScore.toFixed(2)}</span></div>
-          <div className="dataCell"><strong>Analysis Confidence</strong><span>{item.analysisConfidence.toFixed(2)}</span></div>
+          <div className="dataCell"><strong>Risk Confidence</strong><span>{toPercent(item.confidenceScore)}</span></div>
+          <div className="dataCell"><strong>Analysis Confidence</strong><span>{toPercent(item.analysisConfidence)}</span></div>
           <div className="dataCell"><strong>Entities</strong><span>{item.entities.join(", ") || "None"}</span></div>
         </div>
       </div>
